@@ -20,6 +20,7 @@ typedef struct ListRep {
 	int  nitems;      // count of items in list
 	ListNode *first; // first node in list
 	ListNode *curr;  // current node in list
+	struct ListRep *next;
 //	ListNode *last;  // last node in list
 } ListRep;
 
@@ -44,6 +45,7 @@ List newList()
 	L->nitems = 0;
 	L->first = NULL;
 	L->curr = NULL;
+	L->next = NULL;
 	return L;
 }
 
