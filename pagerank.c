@@ -3,7 +3,9 @@
 #include <assert.h>
 #include <ctype.h>
 #include <string.h>
-//#include "Graph.h"
+#include "Graph.h"
+#include "List.h"
+#include "readData.h"
 
 #define FALSE 0
 #define TRUE 1
@@ -12,33 +14,40 @@
 
 //This is just pseduocode does not currently run - Nathan 15/10 12:34
 
+
+
 int main(){
 
+
+	Graph pageGraph = readCollection("collection.txt");
+	/*
 	FILE *fp;
-	//Graph pageGraph;
+	Graph pageGraph;
 	fp = fopen("collection.txt", "r");
 
 	//Read Urls
 	char curr_URL[URL_SIZE]; // Dynamically allocate this shit
-	char index_URL[URL_NUM][URL_SIZE];	//Dynamically allocate this shit, HOLDS THE INDEX value to the URL string so (e.g. 0 = url23, 1 = url56 etc)
 	int url_count = 0; // Counts the nV / URLS that are in the collection.txt
 
+	//List webSites;
 
 	//Determine size of graph
 	while(fscanf(fp, "%s", curr_URL) != EOF){	//Find some way to read each WORD
-		strcpy(index_URL[url_count], curr_URL);
+		printf("%d) testing %s\n", url_count, curr_URL);
 		url_count++;
-		printf("%d) testing %s\n", url_count, index_URL[url_count]);
 	}
-
+	char *index_URL[url_count - 1];	//Dynamically allocate this shit, HOLDS THE INDEX value to the URL string so (e.g. 0 = url23, 1 = url56 etc)
 	pageGraph = createGraph(url_count);
-	//GRAPH should have a data type that holds the index value!
-	//Move file pointer to start of string
-	fseek(fptr, 0, SEEK_SET);
+	rewind(fp); 							//Rewinds the fp to start of pointer
+	url_count = 0;
 	while(fscanf(fp, "%s", curr_URL) != EOF){
+		index_URL[url_count] = strdup(curr_URL);
+		url_count++;
+	}*/
 
-	}
+
 
 	//Add values into it
 
 }
+
