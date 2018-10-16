@@ -16,6 +16,9 @@ void freeList(List);
 // add item to list
 void insertList(List, char*);
 
+// is the item in the list
+int isInList(List, char*);
+
 // check sanity of a List (for testing)
 int validList(List);
 
