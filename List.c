@@ -11,7 +11,7 @@
 // data structures representing List
 
 typedef struct ListNode {
-	char   *value;  // value of this list item (string)
+	char   *string;  // string of this list item (string)
 	struct ListNode *next;
 	               // pointer to next node in list
 } ListNode;
@@ -30,7 +30,7 @@ static ListNode *newListNode(char *it)
 	ListNode *new;
 	new = malloc(sizeof(ListNode));
 	assert(new != NULL);
-	new->value = strdup(it);
+	new->string = strdup(it);
 	new->next = NULL;
 	return new;
 }
@@ -58,7 +58,7 @@ void freeList(List L)
 	while (curr != NULL) {
 		prev = curr;
 		curr = curr->next;
-		free(prev->value);
+		free(prev->string);
 		free(prev);
 	}
 	free(L);
@@ -76,9 +76,15 @@ void insertList(List L, char *it){
 	}
 }
 
-/*int isInList(List L, char* index){
-
-}*/
+//Returns 1 if found
+int isInList(List L, char* index){
+	ListNode *curr = L->first;
+	while(curr != NULL){
+		if (strcmp(curr->string, index) == 0) return 1;
+		curr = curr->next;
+	}
+	return 0;
+}
 // check sanity of a List (for testing)
 int validList(List L)
 {
@@ -120,7 +126,7 @@ int validList(List L)
 char *ListCurrent(List L)
 {
 	assert(L != NULL); assert(L->curr != NULL);
-	return L->curr->value;
+	return L->curr->string;
 }
 
 
@@ -138,7 +144,7 @@ int ListIsEmpty(List L)
 
 void showState(List L){
 	if(L->nitems != 0){
-		 printf("| curr -  %s | ", L->curr->value);
+		 printf("| curr -  %s | ", L->curr->string);
 	}else{
 		printf("| curr - NULL | ");
 	}
@@ -198,8 +204,8 @@ List getList(FILE *in)
 
 	L = newList();
 	while (fgets(line,1000,in) != NULL) {
-		char *value = strdup(trim(line));
-		new = newListNode(value);
+		char *string = strdup(trim(line));
+		new = newListNode(string);
 		if (L->last == NULL) {
 			L->first = L->last = new;
 		}
@@ -221,5 +227,5 @@ void putList(FILE *out, List L)
 	assert(out != NULL); assert(L != NULL);
 	ListNode *curr;
 	for (curr = L->first; curr != NULL; curr = curr->next)
-		fprintf(out,"%s\n",curr->value);
+		fprintf(out,"%s\n",curr->string);
 }*/
