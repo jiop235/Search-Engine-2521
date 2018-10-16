@@ -66,7 +66,7 @@ void freeList(List L)
 
 void insertList(List L, char *it){
 	L->nitems++;
-	ListNode new = newListNode(it);
+	ListNode *new = newListNode(it);
 	if(L->first == NULL){
 		L->first = new;
 		L->curr = new;
@@ -75,6 +75,10 @@ void insertList(List L, char *it){
 		L->curr = L->curr->next;
 	}
 }
+
+/*int isInList(List L, char* index){
+
+}*/
 // check sanity of a List (for testing)
 int validList(List L)
 {
