@@ -9,7 +9,7 @@ pagerank: $(OBJS)
 	$(CC) -o pagerank $(OBJS)
 
 pagerank.o: pagerank.c Graph.h
-	$(CC) -c $(CLFAGS) pagerank.c
+	$(CC) -c $(CFLAGS) pagerank.c
 
 Graph.o: Graph.c Graph.h List.h readData.h
 	$(CC) -c $(CLFAGS) Graph.c
@@ -17,7 +17,7 @@ Graph.o: Graph.c Graph.h List.h readData.h
 List.o: List.c List.h
 	$(CC) -c $(CFLAGS) List.c
 
-readData.o: readData.c List.h Graph.h
+readData.o: readData.c List.h Graph.h readData.h
 	$(CC) -c $(CFLAGS) readData.c
 
 clean:
