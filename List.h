@@ -34,6 +34,8 @@ int ListIsEmpty(List);
 //Print curr and nitems
 void showState(List L);
 
+void showList(List);
+
 
 /*
 // create an List by reading items from a file
