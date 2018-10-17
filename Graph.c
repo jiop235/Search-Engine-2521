@@ -1,78 +1,58 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include <assert.h>
-#include <string.h>
-#include "Graph.h"
-#include "List.h"
 
-//Inpiration from week8 lab 2521 written by John Shepard 2015
+// General structure attributed to week3 lab 2521 DLList.h
+// Written by John Shepherd, March 2013
+// Last modified, August 2014
 
 
-Graph createGraph(int nV){
+typedef struct ListRep *List;
 
-	//Create GraphRep basic Structure
-	assert(nV > 0);
-	int v, w;
-	Graph new = malloc(sizeof(GraphRep));
-	assert(new != NULL);
-	new->nV = nV; new->nE = 0; 
-	new->edges = malloc(nV * (sizeof(List)));
-	assert(new->edges != NULL);
+// create a new empty List
+List newList();
 
-	new->index_URL = malloc(nV * sizeof(char*));
+// free up all space associated with list
+void freeList(List);
 
-	/*for(v = 0; v < nV; v++){
-		new->edges[v] = malloc(nV*sizeof(int));
-		assert(new->edges[v] != NULL);
-		for(w = 0; w < nV; w++)
-			new->edges[v][w] = 0;
-	}*/
-	
-	return new;
-}
+// add item to list
+void insertList(List, char*);
 
-void destroyGraph(Graph g){
-	if(g == NULL) return;
-	int i;
-	for(i = 0; i < g->nV; i++){
-		freeList(g->edges[i]);
-		//free(g->edges[i]);
-	}
-	free(g->edges);
-	free(g);
-}
+// is the item in the list
+int isInList(List, char*);
 
-void insertEdge(Graph g, Vertex v, Vertex w){
-	assert(g != NULL);
-	insertList(g->edges[v], g->index_URL[w]);
-	//g->edges[v][w] = 1;
-	//g->edges[w][v] = 1;
-}
+// check sanity of a List (for testing)
+int validList(List);
 
-int isConnected(Graph g, Vertex v, Vertex w){
-	if (v < 0 || w < 0 || v > g->nV || w > g->nV){
-		return 0;
-	}else{
-		//return g->edges[v][w];
-		return isInList(g->edges[v], g->index_URL[w]);
-	}
-}
+// return item at current position
+char *ListCurrent(List);
+
+// return number of elements in a list
+int ListLength(List);
+
+// is the list empty?
+int ListIsEmpty(List);
+
+//Print curr and nitems
+void showState(List L);
+
+//Print the list
+void showList(List L);
+
+
 /*
-void showGraph(Graph g){
-	assert(g != NULL);
-	printf("Graph has %d vertices:\n",g->nV);
-		int i, j;
+// create an List by reading items from a file
+// assume that the file is open for reading
+List getList(FILE *);
 
-		for (i = 0; i < g->nV; i++) {
-			for (j = 0; j < g->nV; j++)
-				printf("%d",g->edges[i][j]);
-			putchar('\n');
-		}
-
-		
-}*/
+// display list to file, one item per line
+// assumes that the file is open for writing
+void putList(FILE *, List);
+*/
 /*
-void removeEdge(Graph g, Vertex v, Vertex w){
-	assert(g != NULL);
-	g->edges[v][w] = 0;
-}*/
+// move current position (+ve forward, -ve backward)
+// return 1 if reach end of list during move
+int ListMove(List, int);
+
+// move to specified position in list
+// i'th node, assuming first node has i==1
+int ListMoveTo(List, int);
+*/
