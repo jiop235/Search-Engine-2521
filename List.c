@@ -21,7 +21,6 @@ typedef struct ListNode {
 typedef struct ListRep {
 	int  nitems;      // count of items in list
 	ListNode *first; // first node in list
-	ListNode *curr;  // current node in list
 	struct ListRep *next;
 //	ListNode *last;  // last node in list
 } ListRep;
@@ -46,8 +45,6 @@ List newList()
 	assert (L != NULL);
 	L->nitems = 0;
 	L->first = NULL;
-	L->curr = NULL;
-	L->next = NULL;
 	return L;
 }
 
@@ -67,14 +64,18 @@ void freeList(List L)
 }
 
 void insertList(List L, char *it){
+	printf("List %s\n", it);
 	L->nitems++;
+	printf("List nitems %d\n", L->nitems);
 	ListNode *new = newListNode(it);
 	if(L->first == NULL){
 		L->first = new;
-		L->curr = new;
 	}else{
-		L->curr->next = new;
-		L->curr = L->curr->next;
+		ListNode *curr = L->first;
+		while(curr->next != NULL){
+			curr = curr->next;
+		}
+		curr->next = new;
 	}
 }
 
@@ -94,20 +95,6 @@ int validList(List L)
 		fprintf(stderr,"List is null\n");
 		return 0;
 	}
-	if (L->first == NULL) {
-		// list is empty; curr and last should be null
-		if (L->curr != NULL) {
-			fprintf(stderr,"Non-null pointers in empty list\n");
-			return 0;
-		}
-	}
-	else {
-		// list is not empty; curr and last should be non-null
-		if (L->curr == NULL) {
-			fprintf(stderr,"Null pointers in non-empty list\n");
-			return 0;
-		}
-	}
 	int count;
 	ListNode *curr;
 	// check scanning forward through list
@@ -124,13 +111,6 @@ int validList(List L)
 	return 1;
 }
 
-// return item at current position
-char *ListCurrent(List L)
-{
-	assert(L != NULL); assert(L->curr != NULL);
-	return L->curr->string;
-}
-
 
 // return number of elements in a list
 int ListLength(List L)
@@ -143,6 +123,25 @@ int ListIsEmpty(List L)
 {
 	return (L->nitems == 0);
 }
+void showList(List L){
+	printf("\nL->nitems %d\n", L->nitems);
+	if(L->nitems != 0){
+		ListNode *curr = L->first;
+		while(curr != NULL){
+			printf("%s", curr->string);
+			curr = curr->next;
+		}
+		//printf("\n");
+	}else{
+		printf("NULL\n");
+	}
+}
+// return item at current position
+/*char *ListCurrent(List L)
+{
+	assert(L != NULL); assert(L->curr != NULL);
+	return L->curr->string;
+}
 
 void showState(List L){
 	if(L->nitems != 0){
@@ -152,18 +151,7 @@ void showState(List L){
 	}
 	printf(" nitems - %d |\n",  L->nitems);
 }
-void showList(List L){
-	if(L->nitems != 0){
-		ListNode *curr = L->first;
-		while(curr != NULL){
-			printf("%s", curr->string);
-		}
-		//printf("\n");
-	}else{
-		printf("NULL\n");
-	}
-}
-/*// move current position (+ve forward, -ve backward)
+// move current position (+ve forward, -ve backward)
 // return 1 if reach end of list during move
 // if current is currently null, return 1
 int ListMove(List L, int n)
