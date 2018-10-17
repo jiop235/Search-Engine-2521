@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include "readData.h"
 #include "Graph.h"
 #include "List.h"
 
@@ -36,12 +37,44 @@ Graph readCollection(char* collection){
 		pageGraph->index_URL[url_count] = strdup(curr_URL);
 		url_count++;
 	}
-	int i = 0;
-	for(i = 0; i < url_count; i++) printf("%d) %s\n", i, pageGraph->index_URL[i]);
-
+	/*int i = 0;
+	for(i = 0; i < url_count; i++) printf("%d) %s\n", i, pageGraph->index_URL[i]);*/
+	insert_URLS(pageGraph);
+	printf("hello?\n");
 	fclose(fp);
 
 	return pageGraph;
+}
+
+void insert_URLS(Graph g){
+	int i = 0;
+	printf("%d\n", g->nV);
+
+	while(i < g->nV){
+		//printf("hehe\n");
+		FILE *fp;
+		//Add .txt at end of string;
+		char *curr_URL = malloc(sizeof(g->index_URL[i]) + 5);
+		strcpy(curr_URL, g->index_URL[i]);
+		strcat(curr_URL, ".txt");
+
+		fp = fopen(curr_URL, "r");
+		if(fp == NULL) printf("yikes\n");
+		char curr_string[URL_SIZE];
+		while(fscanf(fp, "%s", curr_string) != EOF){
+			printf("%s\n", curr_string);
+			if(strcmp(curr_string, "#end") == 0){ break;	}
+			else if((strcmp(curr_string,"#start") == 0) || (strcmp(curr_string,"Section-1") == 0)){
+				continue;
+			}else{
+				insertEdge(g, i, URL_to_index(g->index_URL, curr_string));
+			}
+		}
+		printf("HIII??? %d\n", g->nV);
+		fclose(fp);
+		free(curr_URL);
+		i++;
+	}
 }
 
 
