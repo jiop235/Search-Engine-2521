@@ -18,6 +18,11 @@ Graph createGraph(int nV){
 	new->nV = nV; new->nE = 0; 
 	new->edges = malloc(nV * (sizeof(List)));
 	assert(new->edges != NULL);
+	int i = 0;
+	while(i < nV){
+		new->edges[i] = newList();
+		i++;
+	}
 
 	new->index_URL = malloc(nV * sizeof(char*));
 
@@ -44,6 +49,8 @@ void destroyGraph(Graph g){
 
 void insertEdge(Graph g, Vertex v, Vertex w){
 	assert(g != NULL);
+	printf("w %d\n", w);
+	printf("insertEdge %d %s\n", g->edges[v], g->index_URL[w]);
 	insertList(g->edges[v], g->index_URL[w]);
 	//g->edges[v][w] = 1;
 	//g->edges[w][v] = 1;
@@ -65,9 +72,8 @@ void showGraph(Graph g){
 
 		for (i = 0; i < g->nV; i++) {
 			printf("%d) URL: %s\n", i, g->index_URL[i]);
-			showList(g->index_URL[i]);
+			showList(g->edges[i]);
 		}
-
 		
 }
 /*
