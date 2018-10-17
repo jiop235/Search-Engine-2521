@@ -20,6 +20,7 @@ int main(){
 
 
 	Graph pageGraph = readCollection("collection.txt");
+	showGraph(pageGraph);
 	/*
 	FILE *fp;
 	Graph pageGraph;
