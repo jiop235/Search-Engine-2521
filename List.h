@@ -23,7 +23,7 @@ int isInList(List, char*);
 int validList(List);
 
 // return item at current position
-char *ListCurrent(List);
+//char *ListCurrent(List);
 
 // return number of elements in a list
 int ListLength(List);
@@ -32,7 +32,7 @@ int ListLength(List);
 int ListIsEmpty(List);
 
 //Print curr and nitems
-void showState(List L);
+//void showState(List L);
 
 void showList(List);
 
