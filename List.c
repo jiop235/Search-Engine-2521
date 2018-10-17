@@ -12,6 +12,8 @@
 
 typedef struct ListNode {
 	char   *string;  // string of this list item (string)
+					 //The first value will always be the current URL
+					 //Every value after is it outward links!!!!
 	struct ListNode *next;
 	               // pointer to next node in list
 } ListNode;
@@ -149,6 +151,17 @@ void showState(List L){
 		printf("| curr - NULL | ");
 	}
 	printf(" nitems - %d |\n",  L->nitems);
+}
+void showList(List L){
+	if(L->nitems != 0){
+		ListNode *curr = L->first;
+		while(curr != NULL){
+			printf("%s", curr->string);
+		}
+		//printf("\n");
+	}else{
+		printf("NULL\n");
+	}
 }
 /*// move current position (+ve forward, -ve backward)
 // return 1 if reach end of list during move
