@@ -48,6 +48,7 @@ void insert_URLS(Graph g){
 	int i;
 
 	for(i = 0; i < g->nV; i++){
+		insertIndex(g->edges[i], i);
 		FILE *fp;
 		//Add .txt at end of string
 		char *curr_URL = malloc(sizeof(g->index_URL[i]) + 5);
