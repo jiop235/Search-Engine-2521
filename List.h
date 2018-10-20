@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "Graph.h"
 
 // General structure attributed to week3 lab 2521 DLList.h
 // Written by John Shepherd, March 2013
@@ -15,22 +14,10 @@ List newList();
 void freeList(List);
 
 // add item to list
-void insertList(List, char*, int);
-
+void insertList(List, char*);
 
 // is the item in the list
 int isInList(List, char*);
-
-//Change the value in pageRank
-void changePageRank(List, float);
-
-int getOutLinks(List);
-
-float getPageRank(List);
-
-//Calculate pageRank Weights etc...
-//int pageRankCalc(List L, Graph);		Defined in Graph.h as it require Graph structure
-//.h Hierach Graph.h > List.h > etc.h
 
 // check sanity of a List (for testing)
 int validList(List);
