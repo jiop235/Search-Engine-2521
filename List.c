@@ -25,6 +25,7 @@ typedef struct ListNode {
 } ListNode;
 
 typedef struct ListRep {
+	int index;
 	int outLinks;      // count of items in list
 	int inLinks;
 	float pageRank;
@@ -40,7 +41,7 @@ static ListNode *newListNode(char *it)
 	new = malloc(sizeof(ListNode));
 	assert(new != NULL);
 	new->string = strdup(it);
-	new->Win = -1;
+	new->Wout = -1;
 	new->Win = -1;
 	new->next = NULL;
 	return new;
@@ -112,6 +113,9 @@ void insertList(List L, char *it, int direction){
 	}
 }
 
+void insertIndex(List L, int index){
+	L->index = index;
+}
 void changePageRank(List L, float num){
 	L->pageRank = num;
 }
@@ -156,12 +160,29 @@ void getWeightedValues(List L, Graph g){
 			}else{
 				temp->Wout = ((float)g->edges[currIndex]->outLinks/ totalOutlinks);
 			}
+			inWeight(g->edges[currIndex], g->index_URL[L->index], temp->Wout, 0);
+			inWeight(g->edges[currIndex], g->index_URL[L->index], temp->Win, 1);
 
 		temp = temp->next;
 
 	}
 }
-
+void inWeight(List L, char *string, float val, int type){
+	ListNode *temp;
+	temp = L->inFirst;
+	while(temp != NULL){
+		printf("tempSring %s string %s\n", temp->string, string);
+		if(strcmp(temp->string, string) == 0){
+			if(type == 0){
+				temp->Wout = val;
+			}else{
+				temp->Win = val;
+			}
+			break;
+		}
+		temp = temp->next;
+	}
+}
 float pageRankCalc(List L, Graph g){
 	float result = 0;
 	int currIndex;
@@ -176,11 +197,12 @@ float pageRankCalc(List L, Graph g){
 
 	//if(L->outLinks == 0) totalOutlinks += 0.5;
 	
-	temp = L->outFirst;
+	temp = L->inFirst;
 	while(temp != NULL){
 		printf("	URL: %s Win: %.7f Wout: %.7f\n", temp->string, temp->Win, temp->Wout);
 		currIndex = URL_to_index(g->index_URL, temp->string);
 		tempNum = g->edges[currIndex]->pageRank;
+		//printf("tempNum %f\n", tempNum);
 		tempNum *= temp->Win;
 	    tempNum *= temp->Wout;
 		result += tempNum;
@@ -266,7 +288,7 @@ void showList(List L){
 		ListNode *curr = L->inFirst;
 		printf("Inlinks:\n");
 		while(curr != NULL){
-			printf("  \u2514--->%s\n",  curr->string);
+			printf("  \u2514--->%s Win: %.7f Wout %.7f\n",  curr->string, curr->Win, curr->Wout);
 			curr = curr->next;
 		}
 	}else{
