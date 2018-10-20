@@ -22,9 +22,9 @@ int main(){
 
 
 	Graph pageGraph = readCollection("collection.txt");
-	showGraph(pageGraph);
 	totalPageRank(pageGraph, 0.85, 0.00001, 10000);
-
+	showGraph(pageGraph);
+	
 	int i = 0, j;
 	FILE *fp;
 	fp = fopen("pagerankList.txt", "w");
@@ -48,6 +48,8 @@ int main(){
 	}
 
 	fclose(fp);
+	destroyGraph(pageGraph);
+	
 	return 0;
 	/*
 	FILE *fp;
@@ -91,22 +93,27 @@ void totalPageRank (Graph g, float d, float diffPR, int maxIterations){
 		changePageRank(g->edges[i] , one/N);
 		newPageRank[i] = 0;
 	}
-	
+
+
+	//float inP;
 	int interation = 0;
 	float diff = diffPR;
 	//float prevPageRank;
 	float sumCurrDiff = 0;
 
+	for(i = 0; i < g->nV; i++){
+		getWeightedValues(g->edges[i], g);
+	}
 
 	while(interation < maxIterations && diff >= diffPR){
 		//printf("interation %d\n", interation);
 		for(i = 0; i < g->nV; i++){
 			//prevPageRank = getPageRank(g->edges[i]);
 			//printf("prevPageRank %f\n", prevPageRank);
-
-
+			
+			printf("CURRENT URL %s\n", g->index_URL[i]);
 			newPageRank[i] = ((1 - d)/N) + (d * pageRankCalc(g->edges[i], g));
-			printf("newPageRank %f\n", newPageRank[i]);
+			//rintf("newPageRank %f\n", newPageRank[i]);
 			//changePageRank(g->edges[i], ((1 - d)/N) + (d * pageRankCalc(g->edges[i], g)));
 
 			//printf("after equation %f\n", getPageRank(g->edges[i]));
