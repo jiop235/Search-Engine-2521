@@ -18,6 +18,8 @@ typedef struct ListNode {
 	char   *string;  // string of this list item (string)
 					 //The first value will always be the current URL
 					 //Every value after is it outward links!!!!
+	float Win;
+	float Wout;
 	struct ListNode *next;
 	               // pointer to next node in list
 } ListNode;
@@ -26,6 +28,7 @@ typedef struct ListRep {
 	int outLinks;      // count of items in list
 	int inLinks;
 	float pageRank;
+
 	ListNode *outFirst; // outFirst node in list
 	ListNode *inFirst;
 } ListRep;
@@ -37,6 +40,8 @@ static ListNode *newListNode(char *it)
 	new = malloc(sizeof(ListNode));
 	assert(new != NULL);
 	new->string = strdup(it);
+	new->Win = -1;
+	new->Win = -1;
 	new->next = NULL;
 	return new;
 }
@@ -50,6 +55,8 @@ List newList()
 	L->outLinks = 0;
 	L->pageRank = 0;
 	L->inLinks = 0;
+
+
 	L->outFirst = NULL;
 	L->inFirst = NULL;
 	return L;
@@ -117,59 +124,83 @@ float getPageRank(List L){
 	return L->pageRank;
 }
 
-float pageRankCalc(List L, Graph g){
-	float result = 0;
+void getWeightedValues(List L, Graph g){
 	int currIndex;
-	float numLink;
 	float totalOutlinks = 0;
 	float totalInlinks = 0;
 
 	ListNode *temp;
-	//Get PR(A) = PR(B) + PR(C) + PR(D)
-	//			   L(B) +  L(C) +  L(D)
-	//Calculate total number of inLinks from each outLink
-	/*ListNode *temp = L->inFirst;
-	while(temp != NULL){
-		currIndex = URL_to_index(g->index_URL, temp->string);
-		totalInlinks += g->edges[currIndex]->inLinks;
-		temp = temp->next;
-	}*/
-	//Calculate total number of outLinks from each inLink
 	temp = L->outFirst;
 	while(temp != NULL){
 		currIndex = URL_to_index(g->index_URL, temp->string);
 		//printf("curr %d\n", g->edges[currIndex]->outLinks); 
-		totalInlinks += g->edges[currIndex]->inLinks;
-		totalOutlinks += g->edges[currIndex]->outLinks;
+		totalInlinks += (float)g->edges[currIndex]->inLinks;
+		if(g->edges[currIndex]->outLinks == 0){ 
+			totalOutlinks += 0.5;
+		}else{
+			totalOutlinks += (float)g->edges[currIndex]->outLinks;
+		}
 		temp = temp->next;
 	}
-	if(L->outLinks == 0) totalOutlinks += 0.5;
+
 	temp = L->outFirst;
 	while(temp != NULL){
 		currIndex = URL_to_index(g->index_URL, temp->string);
+
+		//printf("currIndex %d totalInlinks %f totalOutlink %f \n",
+		//	    currIndex, totalInlinks, totalOutlinks);
+			temp->Win = (((float)g->edges[currIndex]->inLinks )/ totalInlinks);
+
+			if(g->edges[currIndex]->outLinks == 0){
+				temp->Wout = (0.5/ totalOutlinks);
+			}else{
+				temp->Wout = ((float)g->edges[currIndex]->outLinks/ totalOutlinks);
+			}
+
+		temp = temp->next;
+
+	}
+}
+
+float pageRankCalc(List L, Graph g){
+	float result = 0;
+	int currIndex;
+	float tempNum;
+	//float totalOutlinks = 0;
+	//float totalInlinks = 0;
+
+	ListNode *temp;
+	//Get PR(A) = PR(B) + PR(C) + PR(D)
+	//			   L(B) +  L(C) +  L(D)
+
+
+	//if(L->outLinks == 0) totalOutlinks += 0.5;
+	
+	temp = L->outFirst;
+	while(temp != NULL){
+		printf("	URL: %s Win: %.7f Wout: %.7f\n", temp->string, temp->Win, temp->Wout);
+		currIndex = URL_to_index(g->index_URL, temp->string);
+		tempNum = g->edges[currIndex]->pageRank;
+		tempNum *= temp->Win;
+	    tempNum *= temp->Wout;
+		result += tempNum;
 		//printf("currIndex %d\n", currIndex);
-		printf("totalOutlink %f totalInlinks %f\n", totalOutlinks, totalInlinks);
 		//if(g->edges[currIndex]->outLinks != 0 ){
 			//printf("outLinks %d\n", g->edges[currIndex]->outLinks);
 			//PR(B)/L(B)
 			//printf("float %f, outLinks %d\n", g->edges[currIndex]->pageRank, g->edges[currIndex]->outLinks);
 			//numLink = ((g->edges[currIndex]->pageRank )/ g->edges[currIndex]->outLinks);
-			numLink = g->edges[currIndex]->pageRank;
-			printf("1) numLink %f\n", numLink);
-			//Weight of inLink
-			numLink *= (((float)g->edges[currIndex]->inLinks )/ totalInlinks);
-			printf("2) numLink %f\n", numLink);
-			//Weight of outLink
-
-			numLink *= ((float)g->edges[currIndex]->outLinks/ totalOutlinks);
-			printf("3) numLink %f\n", numLink);
-			result += numLink;
-			printf("result %f\n", result);
+			//numLink = g->edges[currIndex]->pageRank;
+			//printf("1) numLink %f\n", numLink);
+			//printf("3) numLink %f\n", numLink);
+			//result += numLink;
+			//printf("result %f\n", result);
 		//}
 
 		temp = temp->next;
 
 	}
+
 	printf("returned %f\n", result);
 	return result;
 }
@@ -219,12 +250,12 @@ int ListIsEmpty(List L)
 	return (L->outLinks == 0);
 }
 void showList(List L){
-	printf("L->outLinks %d inLinks: %d\n", L->outLinks, L->inLinks);
+	printf(" nLinks: %d outLinks %d\n",  L->inLinks, L->outLinks);
 	if(L->outLinks != 0){
 		ListNode *curr = L->outFirst;
 		printf("OutLinks:\n");
 		while(curr != NULL){
-			printf("  \u2514--->%s\n",  curr->string);
+			printf("  \u2514--->%s Win: %.7f Wout %.7f\n",  curr->string, curr->Win, curr->Wout);
 			curr = curr->next;
 		}
 	}else{
