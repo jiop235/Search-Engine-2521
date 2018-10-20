@@ -14,7 +14,7 @@ pagerank.o: pagerank.c Graph.h
 Graph.o: Graph.c Graph.h List.h readData.h
 	$(CC) -c $(CLFAGS) Graph.c
 
-List.o: List.c List.h
+List.o: List.c List.h Graph.h readData.h
 	$(CC) -c $(CFLAGS) List.c
 
 readData.o: readData.c List.h Graph.h readData.h
