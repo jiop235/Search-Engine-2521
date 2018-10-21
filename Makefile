@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Wall -Werror
 CDEBUG=-Wall -Werror -g
-OBJS=pagerank.o Graph.o List.o readData.o
+OBJS=pagerank.o Graph.o List.o readData.o inverted.o
 
 all: pagerank
 
@@ -19,6 +19,9 @@ List.o: List.c List.h
 
 readData.o: readData.c List.h Graph.h readData.h
 	$(CC) -c $(CFLAGS) readData.c
+
+inverted.o: inverted.c inverted.h Graph.h List.h readData.h
+	$(CC) -c $(CFLAGS) inverted.c
 
 clean:
 	rm -f pagerank $(OBJS)
