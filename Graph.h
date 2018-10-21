@@ -32,6 +32,9 @@ typedef int Vertex;
 void insertEdge(Graph, Vertex, Vertex);//, int);
 //
 
+void getWeightedValues(List L, Graph g);
+float pageRankCalc(List L, Graph);
+
 int isConnected(Graph, Vertex, Vertex);
 void showGraph(Graph);
 

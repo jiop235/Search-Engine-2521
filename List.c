@@ -7,6 +7,10 @@
 #include <string.h>
 #include <assert.h>
 #include "List.h"
+#include "Graph.h"
+#include "readData.h"
+
+
 
 // data structures representing List
 
@@ -14,15 +18,20 @@ typedef struct ListNode {
 	char   *string;  // string of this list item (string)
 					 //The first value will always be the current URL
 					 //Every value after is it outward links!!!!
+	float Win;
+	float Wout;
 	struct ListNode *next;
 	               // pointer to next node in list
 } ListNode;
 
 typedef struct ListRep {
-	int  nitems;      // count of items in list
-	ListNode *first; // first node in list
-	struct ListRep *next;
-//	ListNode *last;  // last node in list
+	int index;
+	int outLinks;      // count of items in list
+	int inLinks;
+	float pageRank;
+
+	ListNode *outFirst; // outFirst node in list
+	ListNode *inFirst;
 } ListRep;
 
 // create a new ListNode (private function)
@@ -32,6 +41,8 @@ static ListNode *newListNode(char *it)
 	new = malloc(sizeof(ListNode));
 	assert(new != NULL);
 	new->string = strdup(it);
+	new->Wout = -1;
+	new->Win = -1;
 	new->next = NULL;
 	return new;
 }
@@ -40,11 +51,15 @@ static ListNode *newListNode(char *it)
 List newList()
 {
 	struct ListRep *L;
-
 	L = malloc(sizeof (struct ListRep));
 	assert (L != NULL);
-	L->nitems = 0;
-	L->first = NULL;
+	L->outLinks = 0;
+	L->pageRank = 0;
+	L->inLinks = 0;
+
+
+	L->outFirst = NULL;
+	L->inFirst = NULL;
 	return L;
 }
 
@@ -53,35 +68,168 @@ void freeList(List L)
 {
 	assert(L != NULL);
 	ListNode *curr, *prev;
-	curr = L->first;
+	curr = L->outFirst;
 	while (curr != NULL) {
 		prev = curr;
 		curr = curr->next;
 		free(prev->string);
 		free(prev);
 	}
+	curr = L->inFirst;
+	while (curr != NULL) {
+		prev = curr;
+		curr = curr->next;
+		free(prev->string);
+		free(prev);
+	}
+
 	free(L);
 }
 
-void insertList(List L, char *it){
-	printf("List %s\n", it);
-	L->nitems++;
-	printf("List nitems %d\n", L->nitems);
+void insertList(List L, char *it, int direction){
 	ListNode *new = newListNode(it);
-	if(L->first == NULL){
-		L->first = new;
-	}else{
-		ListNode *curr = L->first;
-		while(curr->next != NULL){
-			curr = curr->next;
-		}
-		curr->next = new;
+	if(direction == 0){			//InLinks
+		L->inLinks++;
+		if(L->inFirst == NULL)	{
+			L->inFirst = new;
+		}else{
+			ListNode *curr = L->inFirst;
+			while(curr->next != NULL){
+				curr = curr->next;
+			}
+			curr->next = new;
+		}	
+	}else{						//OutLinks
+		L->outLinks++;
+		if(L->outFirst == NULL)	{
+			L->outFirst = new;
+		}else{
+			ListNode *curr = L->outFirst;
+			while(curr->next != NULL){
+				curr = curr->next;
+			}
+			curr->next = new;
+		}	
 	}
+}
+
+void insertIndex(List L, int index){
+	L->index = index;
+}
+void changePageRank(List L, float num){
+	L->pageRank = num;
+}
+
+int getOutLinks(List L){
+	return L->outLinks;
+}
+
+float getPageRank(List L){
+	return L->pageRank;
+}
+
+void getWeightedValues(List L, Graph g){
+	int currIndex;
+	float totalOutlinks = 0;
+	float totalInlinks = 0;
+
+	ListNode *temp;
+	temp = L->outFirst;
+	while(temp != NULL){
+		currIndex = URL_to_index(g->index_URL, temp->string);
+		//printf("curr %d\n", g->edges[currIndex]->outLinks); 
+		totalInlinks += (float)g->edges[currIndex]->inLinks;
+		if(g->edges[currIndex]->outLinks == 0){ 
+			totalOutlinks += 0.5;
+		}else{
+			totalOutlinks += (float)g->edges[currIndex]->outLinks;
+		}
+		temp = temp->next;
+	}
+
+	temp = L->outFirst;
+	while(temp != NULL){
+		currIndex = URL_to_index(g->index_URL, temp->string);
+
+		//printf("currIndex %d totalInlinks %f totalOutlink %f \n",
+		//	    currIndex, totalInlinks, totalOutlinks);
+			temp->Win = (((float)g->edges[currIndex]->inLinks )/ totalInlinks);
+
+			if(g->edges[currIndex]->outLinks == 0){
+				temp->Wout = (0.5/ totalOutlinks);
+			}else{
+				temp->Wout = ((float)g->edges[currIndex]->outLinks/ totalOutlinks);
+			}
+			inWeight(g->edges[currIndex], g->index_URL[L->index], temp->Wout, 0);
+			inWeight(g->edges[currIndex], g->index_URL[L->index], temp->Win, 1);
+
+		temp = temp->next;
+
+	}
+}
+void inWeight(List L, char *string, float val, int type){
+	ListNode *temp;
+	temp = L->inFirst;
+	while(temp != NULL){
+		printf("tempSring %s string %s\n", temp->string, string);
+		if(strcmp(temp->string, string) == 0){
+			if(type == 0){
+				temp->Wout = val;
+			}else{
+				temp->Win = val;
+			}
+			break;
+		}
+		temp = temp->next;
+	}
+}
+float pageRankCalc(List L, Graph g){
+	float result = 0;
+	int currIndex;
+	float tempNum;
+	//float totalOutlinks = 0;
+	//float totalInlinks = 0;
+
+	ListNode *temp;
+	//Get PR(A) = PR(B) + PR(C) + PR(D)
+	//			   L(B) +  L(C) +  L(D)
+
+
+	//if(L->outLinks == 0) totalOutlinks += 0.5;
+	
+	temp = L->inFirst;
+	while(temp != NULL){
+		printf("	URL: %s Win: %.7f Wout: %.7f\n", temp->string, temp->Win, temp->Wout);
+		currIndex = URL_to_index(g->index_URL, temp->string);
+		tempNum = g->edges[currIndex]->pageRank;
+		//printf("tempNum %f\n", tempNum);
+		tempNum *= temp->Win;
+	    tempNum *= temp->Wout;
+		result += tempNum;
+		//printf("currIndex %d\n", currIndex);
+		//if(g->edges[currIndex]->outLinks != 0 ){
+			//printf("outLinks %d\n", g->edges[currIndex]->outLinks);
+			//PR(B)/L(B)
+			//printf("float %f, outLinks %d\n", g->edges[currIndex]->pageRank, g->edges[currIndex]->outLinks);
+			//numLink = ((g->edges[currIndex]->pageRank )/ g->edges[currIndex]->outLinks);
+			//numLink = g->edges[currIndex]->pageRank;
+			//printf("1) numLink %f\n", numLink);
+			//printf("3) numLink %f\n", numLink);
+			//result += numLink;
+			//printf("result %f\n", result);
+		//}
+
+		temp = temp->next;
+
+	}
+
+	printf("returned %f\n", result);
+	return result;
 }
 
 //Returns 1 if found
 int isInList(List L, char* index){
-	ListNode *curr = L->first;
+	ListNode *curr = L->outFirst;
 	while(curr != NULL){
 		if (strcmp(curr->string, index) == 0) return 1;
 		curr = curr->next;
@@ -99,10 +247,10 @@ int validList(List L)
 	ListNode *curr;
 	// check scanning forward through list
 	count = 0;
-	for (curr = L->first; curr != NULL; curr = curr->next) count++;
-	if (count != L->nitems) {
-		fprintf(stderr, "Forward count mismatch; counted=%d, nitems=%d\n",
-		        count, L->nitems);
+	for (curr = L->outFirst; curr != NULL; curr = curr->next) count++;
+	if (count != L->outLinks) {
+		fprintf(stderr, "Forward count mismatch; counted=%d, outLinks=%d\n",
+		        count, L->outLinks);
 		return 0;
 	}
 	// check scanning backward through list
@@ -115,25 +263,36 @@ int validList(List L)
 // return number of elements in a list
 int ListLength(List L)
 {
-	return (L->nitems);
+	return (L->outLinks);
 }
 
 // is the list empty?
 int ListIsEmpty(List L)
 {
-	return (L->nitems == 0);
+	return (L->outLinks == 0);
 }
 void showList(List L){
-	printf("\nL->nitems %d\n", L->nitems);
-	if(L->nitems != 0){
-		ListNode *curr = L->first;
+	printf(" nLinks: %d outLinks %d\n",  L->inLinks, L->outLinks);
+	if(L->outLinks != 0){
+		ListNode *curr = L->outFirst;
+		printf("OutLinks:\n");
 		while(curr != NULL){
-			printf("%s", curr->string);
+			printf("  \u2514--->%s Win: %.7f Wout %.7f\n",  curr->string, curr->Win, curr->Wout);
 			curr = curr->next;
 		}
-		//printf("\n");
 	}else{
-		printf("NULL\n");
+		printf("Empty List (NULL)\n");
+	}
+
+	if(L->inLinks != 0){
+		ListNode *curr = L->inFirst;
+		printf("Inlinks:\n");
+		while(curr != NULL){
+			printf("  \u2514--->%s Win: %.7f Wout %.7f\n",  curr->string, curr->Win, curr->Wout);
+			curr = curr->next;
+		}
+	}else{
+		printf("Empty List (NULL)\n");
 	}
 }
 // return item at current position
@@ -144,12 +303,12 @@ void showList(List L){
 }
 
 void showState(List L){
-	if(L->nitems != 0){
+	if(L->outLinks != 0){
 		 printf("| curr -  %s | ", L->curr->string);
 	}else{
 		printf("| curr - NULL | ");
 	}
-	printf(" nitems - %d |\n",  L->nitems);
+	printf(" outLinks - %d |\n",  L->outLinks);
 }
 // move current position (+ve forward, -ve backward)
 // return 1 if reach end of list during move
@@ -171,15 +330,15 @@ int ListMove(List L, int n)
 			n++;
 		}
 	}
-	return (L->curr == L->first || L->curr == L->last) ? 1 : 0;
+	return (L->curr == L->outFirst || L->curr == L->last) ? 1 : 0;
 }
 
 // move to specified position in list
-// i'th node, assuming first node has i==1
+// i'th node, assuming outFirst node has i==1
 int ListMoveTo(List L, int i)
 {
 	assert(L != NULL); assert(i > 0);
-	L->curr = L->first;
+	L->curr = L->outFirst;
 	return ListMove(L, i-1);
 }*/
 
@@ -208,16 +367,16 @@ List getList(FILE *in)
 		char *string = strdup(trim(line));
 		new = newListNode(string);
 		if (L->last == NULL) {
-			L->first = L->last = new;
+			L->outFirst = L->last = new;
 		}
 		else {
 			L->last->next = new;
 			new->prev = L->last;
 			L->last = new;
 		}
-		L->nitems++;
+		L->outLinks++;
 	}	
-	L->curr = L->first;
+	L->curr = L->outFirst;
 	return L;
 }
 
@@ -227,6 +386,6 @@ void putList(FILE *out, List L)
 {
 	assert(out != NULL); assert(L != NULL);
 	ListNode *curr;
-	for (curr = L->first; curr != NULL; curr = curr->next)
+	for (curr = L->outFirst; curr != NULL; curr = curr->next)
 		fprintf(out,"%s\n",curr->string);
 }*/
