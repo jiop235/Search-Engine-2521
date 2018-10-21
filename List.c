@@ -8,23 +8,6 @@
 #include <assert.h>
 #include "List.h"
 
-// data structures representing List
-
-typedef struct ListNode {
-	char   *string;  // string of this list item (string)
-					 //The first value will always be the current URL
-					 //Every value after is it outward links!!!!
-	struct ListNode *next;
-	               // pointer to next node in list
-} ListNode;
-
-typedef struct ListRep {
-	int  nitems;      // count of items in list
-	ListNode *first; // first node in list
-	struct ListRep *next;
-//	ListNode *last;  // last node in list
-} ListRep;
-
 // create a new ListNode (private function)
 static ListNode *newListNode(char *it)
 {
