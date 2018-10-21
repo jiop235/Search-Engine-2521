@@ -1,9 +1,28 @@
+#ifndef LIST_H
+#define LIST_H
+
 #include <stdio.h>
 
 // General structure attributed to week3 lab 2521 DLList.h
 // Written by John Shepherd, March 2013
 // Last modified, August 2014
 
+// data structures representing List
+
+typedef struct ListNode {
+	char   *string;  // string of this list item (string)
+					 //The first value will always be the current URL
+					 //Every value after is it outward links!!!!
+	struct ListNode *next;
+	               // pointer to next node in list
+} ListNode;
+
+typedef struct ListRep {
+	int  nitems;      // count of items in list
+	ListNode *first; // first node in list
+	struct ListRep *next;
+//	ListNode *last;  // last node in list
+} ListRep;
 
 typedef struct ListRep *List;
 
@@ -55,3 +74,5 @@ int ListMove(List, int);
 // i'th node, assuming first node has i==1
 int ListMoveTo(List, int);
 */
+
+#endif
