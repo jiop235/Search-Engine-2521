@@ -45,6 +45,7 @@ void insertURLNode(URLList *words, char *string) {
 }
 
 void invertedIndex(Graph g) {
+	int first_line = TRUE;	//If it is the first line of the invertedIndex.txt file
 	//Create the file invertedIndex.txt
 	FILE *fp = NULL;
 	fp = fopen("invertedIndex.txt", "w");
@@ -90,9 +91,15 @@ void invertedIndex(Graph g) {
 
 						FILE *fp = NULL;
 						fp = fopen("invertedIndex.txt", "a");
-							fprintf(fp, "%s\t", curr_string);
+							//Do not print a new line if it is the first line
+							if (first_line == TRUE) {
+								fprintf(fp, "%s ", curr_string);
+								first_line = FALSE;
+							} else {
+								fprintf(fp, "\n%s ", curr_string);
+							}
+
 						fclose(fp);
-		 				 				//printf("second last \n\n\n\n\n");
 		 				find_and_insert(g, curr_string);
 		 				//Find occurrences of curr_string in all of the urls, and note the relevant urls in invertedIndex.txt
 		 				//Exclude 'curr_url' in the search
@@ -183,11 +190,13 @@ void find_and_insert(Graph g, char *string) {
 	 			//fscanf is scanning the words in Section-2
 	 			if (paragraph_started == TRUE) {
 		 			curr_string = normalise(curr_string);
+		 			//If the word we want to search for is found in the file
 		 			if (strcmp(curr_string, string) == 0) {
 		 				FILE *fp = NULL;
 						fp = fopen("invertedIndex.txt", "a");
 							//Append the current URL to the inverted index for 'string'
-							fprintf(fp, "%s ", curr_url);
+							//g->index_URL[i] does not have the .txt appended at the end
+							fprintf(fp, " %s", g->index_URL[i]);
 						fclose(fp);
 						found = TRUE;
 						//Stop searching the current URL file
@@ -199,10 +208,6 @@ void find_and_insert(Graph g, char *string) {
 		free(curr_url);
 		i++;
 	}
-	FILE *fp = NULL;
-	fp = fopen("invertedIndex.txt", "a");
-		fprintf(fp, "\n");
-	fclose(fp);
 }
 
 void swap_lines(char *file_name, char *line_a, char *line_b, int pos_a, int pos_b) {
