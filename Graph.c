@@ -5,7 +5,7 @@
 #include "Graph.h"
 #include "List.h"
 
-//Inpiration from week8 lab 2521 written by John Shepard 2015
+//Inspiration/Basuc Structure (and some code) from week8 lab 2521 written by John Shepard 2015
 
 
 Graph createGraph(int nV){
