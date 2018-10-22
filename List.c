@@ -10,8 +10,6 @@
 #include "Graph.h"
 #include "readData.h"
 
-
-
 // data structures representing List
 
 typedef struct ListNode {
@@ -56,7 +54,6 @@ List newList()
 	L->outLinks = 0;
 	L->pageRank = 0;
 	L->inLinks = 0;
-
 
 	L->outFirst = NULL;
 	L->inFirst = NULL;
@@ -187,43 +184,23 @@ float pageRankCalc(List L, Graph g){
 	float result = 0;
 	int currIndex;
 	float tempNum;
-	//float totalOutlinks = 0;
-	//float totalInlinks = 0;
 
 	ListNode *temp;
-	//Get PR(A) = PR(B) + PR(C) + PR(D)
-	//			   L(B) +  L(C) +  L(D)
-
-
-	//if(L->outLinks == 0) totalOutlinks += 0.5;
 	
 	temp = L->inFirst;
 	while(temp != NULL){
-		printf("	URL: %s Win: %.7f Wout: %.7f\n", temp->string, temp->Win, temp->Wout);
+		//printf("	URL: %s Win: %.7f Wout: %.7f\n", temp->string, temp->Win, temp->Wout);
 		currIndex = URL_to_index(g->index_URL, temp->string);
 		tempNum = g->edges[currIndex]->pageRank;
-		//printf("tempNum %f\n", tempNum);
+
 		tempNum *= temp->Win;
 	    tempNum *= temp->Wout;
 		result += tempNum;
-		//printf("currIndex %d\n", currIndex);
-		//if(g->edges[currIndex]->outLinks != 0 ){
-			//printf("outLinks %d\n", g->edges[currIndex]->outLinks);
-			//PR(B)/L(B)
-			//printf("float %f, outLinks %d\n", g->edges[currIndex]->pageRank, g->edges[currIndex]->outLinks);
-			//numLink = ((g->edges[currIndex]->pageRank )/ g->edges[currIndex]->outLinks);
-			//numLink = g->edges[currIndex]->pageRank;
-			//printf("1) numLink %f\n", numLink);
-			//printf("3) numLink %f\n", numLink);
-			//result += numLink;
-			//printf("result %f\n", result);
-		//}
 
 		temp = temp->next;
 
 	}
 
-	printf("returned %f\n", result);
 	return result;
 }
 
@@ -295,97 +272,3 @@ void showList(List L){
 		printf("Empty List (NULL)\n");
 	}
 }
-// return item at current position
-/*char *ListCurrent(List L)
-{
-	assert(L != NULL); assert(L->curr != NULL);
-	return L->curr->string;
-}
-
-void showState(List L){
-	if(L->outLinks != 0){
-		 printf("| curr -  %s | ", L->curr->string);
-	}else{
-		printf("| curr - NULL | ");
-	}
-	printf(" outLinks - %d |\n",  L->outLinks);
-}
-// move current position (+ve forward, -ve backward)
-// return 1 if reach end of list during move
-// if current is currently null, return 1
-int ListMove(List L, int n)
-{
-	assert(L != NULL);
-	if (L->curr == NULL)
-		return 1;
-	else if (n > 0) {
-		while (n > 0 && L->curr->next != NULL) {
-			L->curr = L->curr->next;
-			n--;
-		}
-	}
-	else if (n < 0) {
-		while (n < 0 && L->curr->prev != NULL) {
-			L->curr = L->curr->prev;
-			n++;
-		}
-	}
-	return (L->curr == L->outFirst || L->curr == L->last) ? 1 : 0;
-}
-
-// move to specified position in list
-// i'th node, assuming outFirst node has i==1
-int ListMoveTo(List L, int i)
-{
-	assert(L != NULL); assert(i > 0);
-	L->curr = L->outFirst;
-	return ListMove(L, i-1);
-}*/
-
-// trim off \n from strings (private function)
-// this is needed for getList() because of fgets()
-// alternatively, we could use the evil gets() function
-/*static char *trim(char *s)
-{
-	int end = strlen(s)-1;
-	if (s[end] == '\n') s[end] = '\0';
-	return s;
-}*/
-
-/*
-// create an List by reading items from a file
-// assume that the file is open for reading
-// assume one item per line, line < 999 chars
-List getList(FILE *in)
-{
-	List L;
-	ListNode *new;
-	char line[1000];
-
-	L = newList();
-	while (fgets(line,1000,in) != NULL) {
-		char *string = strdup(trim(line));
-		new = newListNode(string);
-		if (L->last == NULL) {
-			L->outFirst = L->last = new;
-		}
-		else {
-			L->last->next = new;
-			new->prev = L->last;
-			L->last = new;
-		}
-		L->outLinks++;
-	}	
-	L->curr = L->outFirst;
-	return L;
-}
-
-// display list to file, one item per line
-// assumes that the file is open for writing
-void putList(FILE *out, List L)
-{
-	assert(out != NULL); assert(L != NULL);
-	ListNode *curr;
-	for (curr = L->outFirst; curr != NULL; curr = curr->next)
-		fprintf(out,"%s\n",curr->string);
-}*/
