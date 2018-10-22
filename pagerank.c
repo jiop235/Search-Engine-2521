@@ -6,6 +6,7 @@
 #include "Graph.h"
 #include "List.h"
 #include "readData.h"
+#include "inverted.h"
 
 #define FALSE 0
 #define TRUE 1
@@ -21,6 +22,11 @@ int main(){
 
 	Graph pageGraph = readCollection("collection.txt");
 	showGraph(pageGraph);
+	invertedIndex(pageGraph);
+
+	sort_index("invertedIndex.txt");
+	//swap_lines("invertedIndex.txt", "mars	url11.txt url21.txt url22.txt url23.txt url32.txt url34.txt \n", "of	url11.txt \n", 1, 7);
+	//printf("line_num of file is: %d\n", file_line_num("invertedIndex.txt"));
 	/*
 	FILE *fp;
 	Graph pageGraph;
@@ -49,6 +55,6 @@ int main(){
 
 
 	//Add values into it
-
+	return 1;
 }
 
