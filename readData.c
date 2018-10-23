@@ -2,43 +2,59 @@
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
+#include "readData.h"
 #include "Graph.h"
 #include "List.h"
-#include "readData.h"
 
 #define FALSE 0
 #define TRUE 1
 #define URL_NUM 10
 #define URL_SIZE 30
 
-Graph readCollection(char* collection){
+int collectionLength(char* file){
 	FILE *fp;
-	Graph pageGraph;
-	if((fp = fopen(collection, "r")) == NULL) return NULL;
+	if((fp = fopen(file, "r")) == NULL) return -1;
 
-	//Read Urls
-	char curr_URL[URL_SIZE]; // Dynamically allocate this shit
-	int url_count = 0; 		 // Counts the nV / URLS that are in the collection.txt
+	char buffer[URL_SIZE];
+	int url_count = 0;
 
-	//Determine size of graph and initialise
-	while(fscanf(fp, "%s", curr_URL) != EOF){	//Find some way to read each WORD
-		printf("%d) testing %s\n", url_count, curr_URL);
+	while(fscanf(fp, "%s", buffer) != EOF){
 		url_count++;
 	}
+
+	fclose(fp);
+	return url_count;
+}
+
+char** getCollection(char* file, int size){
+	FILE *fp;
+	if((fp = fopen(file, "r")) == NULL) return NULL;
+
+	char buffer[URL_SIZE];
+	char **index_URL = calloc(size, sizeof(char*));
+	int url_count = 0;
+
+	while(fscanf(fp, "%s", buffer) != EOF){
+		index_URL[url_count] = malloc(strlen(buffer) + 1);
+		strcpy(index_URL[url_count], buffer);
+		url_count++;
+	}
+
+	fclose(fp);
+	return index_URL;
+}
+
+
+Graph makeGraph(int url_count, char **index_URL){
+	Graph pageGraph;
+
 	pageGraph = createGraph(url_count);
 
 	//g->index_URL[] - HOLDS THE INDEX value to the URL string so (e.g. 0 = url23, 1 = url56 etc)
 
-	//Load URLS into the g->index_URLS[]
-	rewind(fp); 							//Rewinds the fp to start of pointer
-	url_count = 0;
-	while(fscanf(fp, "%s", curr_URL) != EOF){
-		pageGraph->index_URL[url_count] = strdup(curr_URL);
-		url_count++;
-	}
+	pageGraph->index_URL = index_URL;
 
 	insert_URLS(pageGraph);
-	fclose(fp);
 
 	return pageGraph;
 }

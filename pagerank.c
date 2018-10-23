@@ -20,8 +20,8 @@ void totalPageRank (Graph g, float d, float diffPR, int maxIterations);
 void createPageList(Graph g);
 
 int main(){
-
-	Graph pageGraph = readCollection("collection.txt");
+	int lines = collectionLength("collection.txt");
+	Graph pageGraph = makeGraph(lines, getCollection("collection.txt", lines));
 	totalPageRank(pageGraph, 0.85, 0.00001, 10000);
 	showGraph(pageGraph);
 	createPageList(pageGraph);
