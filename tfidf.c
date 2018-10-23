@@ -13,7 +13,7 @@
 #define MAX_LINE_LEN 1024
 #define FIRST_LINE 1
 
-float tfidf_page(Graph g, char *page_name, int argc, char **argv) {
+float tfidf_page(int pageLength, char *page_name, int argc, char **argv) {
 	float total_tfidf = 0;
 	int i = 1;
 
@@ -21,16 +21,15 @@ float tfidf_page(Graph g, char *page_name, int argc, char **argv) {
 	if((fp = fopen(page_name, "r")) == NULL) return -1;
 	char *curr_string = malloc(MAX_LINE_LEN);
 	curr_string[0] = '\0';
+
 	//For each query term
-	printf("page_name %s\n", page_name);
 	while (i < argc) {
-		printf("i %d argc %d argv[i] %s\n", i, argc, argv[i]);
+
 		int paragraph_started = FALSE;
 		//Loop through the entire file, and scan each word
 		while (fscanf(fp, "%s", curr_string) != EOF) {
 			if (strcmp(curr_string, "Section-2") == 0) {
-	 		//Section-2 has started
-				//printf("hehe\n");
+	 			//Section-2 has started
 				paragraph_started = TRUE;
 				continue;
 			} else if (paragraph_started == TRUE && strcmp(curr_string, "#end") == 0) {
@@ -40,12 +39,12 @@ float tfidf_page(Graph g, char *page_name, int argc, char **argv) {
 			//If the current query term is found in the URL file, then run tfidf_word()
 			curr_string = normalise(curr_string);
 			if (paragraph_started == TRUE && strcmp(curr_string, argv[i]) == 0) {
-				total_tfidf += tfidf_word(g, page_name, argv[i]);
+				total_tfidf += tfidf_word(pageLength, page_name, argv[i]);
 			}
 		}
+		
 		rewind(fp);
 		i++;
-		printf("total_tfidf %f\n", total_tfidf);
 	}
 
 	fclose(fp);
@@ -54,10 +53,10 @@ float tfidf_page(Graph g, char *page_name, int argc, char **argv) {
 	return total_tfidf;
 }
 
-float tfidf_word(Graph g, char *file_name, char *term) {
+float tfidf_word(int pageLength, char *file_name, char *term) {
 	float tfVal = tf(term, file_name);
 	if(tfVal == 0) return 0;				//If not in file exit early
-	return tfVal * idf(g, term);
+	return tfVal * idf(pageLength, term);
 }
 
 float tf(char *term, char *file_name) {
@@ -72,8 +71,8 @@ float tf(char *term, char *file_name) {
 	return tf;
 }
 
-float idf(Graph g, char *term) {
-	int total_doc_num = g->nV;
+float idf(int pageLength, char *term) {
+	int total_doc_num = pageLength;
 	//Number of total URL files in graph
 	int doc_num_with_term = files_with_term(term);
 	//Number of documents containing 'term'
@@ -173,25 +172,3 @@ int files_with_term(char *term) {
 }
 
 
-char *normalise(char *string) {
-	//Remove . , ; ? if they appear at END OF WORD
-	if (string[strlen(string) - 1] == '.'
-	|| string[strlen(string) - 1] == ','
-	|| string[strlen(string) - 1] == ';'
-	|| string[strlen(string) - 1] == '?') {
-		string[strlen(string) - 1] = '\0';
-	}
-
-	//Converting all characters to lowercase
-	int i = 0;
-	while (string[i] != '\0') {
-		//If the character is upper cases
-		if (string[i] >= 'A' && string[i] <= 'Z') {
-			string[i] = string[i] - 'A' + 'a';
-		}
-
-		i++;
-	}
-
-	return string;
-}

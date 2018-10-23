@@ -4,16 +4,16 @@
 #include <stdio.h>
 
 //Function sums the tfidf values for each query term in the URL page
-float tfidf_page(Graph g, char *page_name, int argc, char **argv);
+float tfidf_page(int pageLength, char *page_name, int argc, char **argv);
 
 //Function returns tfidf of 'term' in 'file_name'
-float tfidf_word(Graph g, char *file_name, char *term);
+float tfidf_word(int pageLength, char *file_name, char *term);
 
 //Function returns the term frequency of a term in a given file
 float tf(char *term, char *file_name);
 
 //Function returns the inverted document frequency of a term in the graph
-float idf(Graph g, char *term);
+float idf(int pageLength, char *term);
 
 //Function returns the number of words in a given URL file
 int word_count(char *file_name);

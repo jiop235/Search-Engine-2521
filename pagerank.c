@@ -19,10 +19,22 @@
 void totalPageRank (Graph g, float d, float diffPR, int maxIterations);
 void createPageList(Graph g);
 
-int main(){
+int main(int argc, char *argv[]){
+	
+	if(argc != 4){
+		printf("Incorrect Input\n");
+		printf("Usage: %s d diffPR maxIterations\n", argv[0]);
+	}
+	float d = atof(argv[1]);
+	float diffPR = atof(argv[2]);
+	int maxIterations = atoi(argv[3]);
+
+	//Initialise Graph
 	int lines = collectionLength("collection.txt");
 	Graph pageGraph = makeGraph(lines, getCollection("collection.txt", lines));
-	totalPageRank(pageGraph, 0.85, 0.00001, 10000);
+
+
+	totalPageRank(pageGraph, d, diffPR, maxIterations);
 	showGraph(pageGraph);
 	createPageList(pageGraph);
 	destroyGraph(pageGraph);

@@ -89,6 +89,29 @@ void insert_URLS(Graph g){
 	}
 }
 
+char *normalise(char *string) {
+	//Remove . , ; ? if they appear at END OF WORD
+	if (string[strlen(string) - 1] == '.'
+	|| string[strlen(string) - 1] == ','
+	|| string[strlen(string) - 1] == ';'
+	|| string[strlen(string) - 1] == '?') {
+		string[strlen(string) - 1] = '\0';
+	}
+
+	//Converting all characters to lowercase
+	int i = 0;
+	while (string[i] != '\0') {
+		//If the character is upper cases
+		if (string[i] >= 'A' && string[i] <= 'Z') {
+			string[i] = string[i] - 'A' + 'a';
+		}
+
+		i++;
+	}
+
+	return string;
+}
+
 
 //Translate URL to index
 int URL_to_index(char *index_URL[], char *URL){
@@ -101,7 +124,7 @@ int URL_to_index(char *index_URL[], char *URL){
 }
 
 //Transalte index to URL
-char* index_to_URL(char *index_URL[], int index){
+/*char* index_to_URL(char *index_URL[], int index){
 	if (index_URL[index] != NULL) return index_URL[index];
 	return NULL;
-}
+}*/

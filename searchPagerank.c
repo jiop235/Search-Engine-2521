@@ -4,6 +4,7 @@
 #include <assert.h>
 
 #define URL_SIZE 10
+#define MAX_WORD_LENGTH 1024
 
 int findURLindex(char name[][URL_SIZE], char *url, int url_count);
 
@@ -49,7 +50,7 @@ int main(int argc, char *argv[]){
 	//Loop through all words and increment url_values
 	for(i = 1; i < argc ; i++){
 		searchWord = strdup(argv[i]);
-		currWord = malloc(strlen(argv[i]) + 1);
+		currWord = malloc(MAX_WORD_LENGTH);				//Dont know how to efficiently dynamically allocate the buffer
 		//Read first word on each line an compare with searchWord
 		while(fscanf(fp, "%s", currWord) != EOF){
 			if(strcmp(currWord, searchWord) == 0){
@@ -62,13 +63,16 @@ int main(int argc, char *argv[]){
 				}
 				break;
 			}
-			fscanf(fp,"%*[^\n]", currWord);		//Read to \n
+			fscanf(fp, "%[^\n]", currWord);		//Read to \n
 		}
 		rewind(fp);
 		free(currWord);
 
 	}
+	//printf()
+	fclose(fp);
 
+	//Simple insertion sort
 	int url_max = 0;
 	for(i = 0; i < url_count; i++){
 		if(url_max == 30) break;
@@ -77,7 +81,6 @@ int main(int argc, char *argv[]){
 			url_max++;
 		} 
 	}
-	fclose(fp);
 
 	return 0;
 }

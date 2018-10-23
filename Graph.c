@@ -16,7 +16,7 @@ Graph createGraph(int nV){
 
 	Graph new = malloc(sizeof(GraphRep));
 	assert(new != NULL);
-	new->nV = nV; new->nE = 0; 
+	new->nV = nV; 
 
 	//Malloc Array of Lists
 	new->edges = malloc(nV * (sizeof(List)));
@@ -38,6 +38,8 @@ void destroyGraph(Graph g){
 		freeList(g->edges[i]);
 	free(g->edges);
 
+	for(i = 0; i < g->nV; i++)
+		free(g->index_URL[i]);
 	free(g->index_URL);
 	free(g);
 }
@@ -59,14 +61,15 @@ int isConnected(Graph g, Vertex v, Vertex w){
 
 void showGraph(Graph g){
 	assert(g != NULL);
-	printf("Graph has %d vertices:\n",g->nV);
 
+	printf("\n------SHOWING GRAPH------\n\n");
+	printf("Graph has %d vertices:\n",g->nV);
 	int i;
 	for (i = 0; i < g->nV; i++) {
 		printf("%d) URL: %s ", i, g->index_URL[i]);
 		showList(g->edges[i]);
 	}
-		
+	printf("\n\n------END GRAPH------\n");	
 }
 /*
 void removeEdge(Graph g, Vertex v, Vertex w){

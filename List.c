@@ -16,20 +16,20 @@ typedef struct ListNode {
 	char   *string;  // string of this list item (string)
 					 //The first value will always be the current URL
 					 //Every value after is it outward links!!!!
-	float Win;
-	float Wout;
+	float Win;	     //Weight in
+	float Wout;      //Weight out
 	struct ListNode *next;
 	               // pointer to next node in list
 } ListNode;
 
 typedef struct ListRep {
-	int index;
-	int outLinks;      // count of items in list
-	int inLinks;
-	float pageRank;
+	int index;		   // index
+	int outLinks;      // number of outLinks
+	int inLinks;	   // number of inLinks
+	float pageRank;    // pagerank
 
-	ListNode *outFirst; // outFirst node in list
-	ListNode *inFirst;
+	ListNode *outFirst; // first node of outLinks list
+	ListNode *inFirst;  // first node of inLinks
 } ListRep;
 
 // create a new ListNode (private function)
@@ -38,6 +38,7 @@ static ListNode *newListNode(char *it)
 	ListNode *new;
 	new = malloc(sizeof(ListNode));
 	assert(new != NULL);
+
 	new->string = strdup(it);
 	new->Wout = -1;
 	new->Win = -1;
@@ -83,6 +84,7 @@ void freeList(List L)
 	free(L);
 }
 
+//Insert string in list (depends on direction)
 void insertList(List L, char *it, int direction){
 	ListNode *new = newListNode(it);
 	if(direction == 0){			//InLinks
@@ -130,11 +132,11 @@ void getWeightedValues(List L, Graph g){
 	float totalOutlinks = 0;
 	float totalInlinks = 0;
 
+	//Calculate total Outlink for both in and out links
 	ListNode *temp;
 	temp = L->outFirst;
 	while(temp != NULL){
-		currIndex = URL_to_index(g->index_URL, temp->string);
-		//printf("curr %d\n", g->edges[currIndex]->outLinks); 
+		currIndex = URL_to_index(g->index_URL, temp->string); 
 		totalInlinks += (float)g->edges[currIndex]->inLinks;
 		if(g->edges[currIndex]->outLinks == 0){ 
 			totalOutlinks += 0.5;
@@ -144,12 +146,12 @@ void getWeightedValues(List L, Graph g){
 		temp = temp->next;
 	}
 
+
+	//Calculate Wout and transfer value to Win
 	temp = L->outFirst;
 	while(temp != NULL){
 		currIndex = URL_to_index(g->index_URL, temp->string);
 
-		//printf("currIndex %d totalInlinks %f totalOutlink %f \n",
-		//	    currIndex, totalInlinks, totalOutlinks);
 			temp->Win = (((float)g->edges[currIndex]->inLinks )/ totalInlinks);
 
 			if(g->edges[currIndex]->outLinks == 0){
@@ -157,6 +159,7 @@ void getWeightedValues(List L, Graph g){
 			}else{
 				temp->Wout = ((float)g->edges[currIndex]->outLinks/ totalOutlinks);
 			}
+			// Put Wout into Win
 			inWeight(g->edges[currIndex], g->index_URL[L->index], temp->Wout, 0);
 			inWeight(g->edges[currIndex], g->index_URL[L->index], temp->Win, 1);
 
@@ -164,6 +167,7 @@ void getWeightedValues(List L, Graph g){
 
 	}
 }
+
 void inWeight(List L, char *string, float val, int type){
 	ListNode *temp;
 	temp = L->inFirst;
@@ -180,6 +184,8 @@ void inWeight(List L, char *string, float val, int type){
 		temp = temp->next;
 	}
 }
+
+
 float pageRankCalc(List L, Graph g){
 	float result = 0;
 	int currIndex;
@@ -187,18 +193,18 @@ float pageRankCalc(List L, Graph g){
 
 	ListNode *temp;
 	
+	//Calculate the summation
 	temp = L->inFirst;
 	while(temp != NULL){
-		//printf("	URL: %s Win: %.7f Wout: %.7f\n", temp->string, temp->Win, temp->Wout);
 		currIndex = URL_to_index(g->index_URL, temp->string);
-		tempNum = g->edges[currIndex]->pageRank;
 
+		tempNum = g->edges[currIndex]->pageRank;
 		tempNum *= temp->Win;
 	    tempNum *= temp->Wout;
+		
 		result += tempNum;
 
 		temp = temp->next;
-
 	}
 
 	return result;
@@ -213,6 +219,7 @@ int isInList(List L, char* index){
 	}
 	return 0;
 }
+
 // check sanity of a List (for testing)
 int validList(List L)
 {
@@ -248,7 +255,9 @@ int ListIsEmpty(List L)
 {
 	return (L->outLinks == 0);
 }
+
 void showList(List L){
+	//show list both in and out links
 	printf(" nLinks: %d outLinks %d\n",  L->inLinks, L->outLinks);
 	if(L->outLinks != 0){
 		ListNode *curr = L->outFirst;
