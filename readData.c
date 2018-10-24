@@ -40,6 +40,7 @@ char** getCollection(char* file, int size){
 		url_count++;
 	}
 
+	recurInsertion(index_URL, size);
 	fclose(fp);
 	return index_URL;
 }
@@ -123,6 +124,22 @@ int URL_to_index(char *index_URL[], char *URL){
 	return -1;
 }
 
+void recurInsertion(char **arr, int size){
+
+	if(size <= 1) return;
+
+	recurInsertion(arr, size - 1);
+
+	int i = size - 2;
+	char *tail = arr[size - 1];
+
+	while(i >= 0 && strcmp(arr[i], tail) > 0 ){
+		arr[i+1] = arr[i];
+		i--;
+	}
+	arr[i+1] = tail;
+
+}
 //Transalte index to URL
 /*char* index_to_URL(char *index_URL[], int index){
 	if (index_URL[index] != NULL) return index_URL[index];

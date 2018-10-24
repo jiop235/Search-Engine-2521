@@ -24,3 +24,6 @@ char *normalise(char *string);
 //Translates a given URL name and gives its index value;
 int URL_to_index(char *index_URL[], char *URL);
 //char* index_to_URL(char *index_URL[], int index);
+
+//Recursively insert sort
+void recurInsertion(char **arr, int size);

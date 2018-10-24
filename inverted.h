@@ -3,35 +3,54 @@
 
 #include <stdio.h>
 
-typedef struct URLNode {
-	char *string;
-	struct URLNode *next;
-} URLNode;
+typedef struct listNode {
+	char *URL_name;
+	struct listNode *next;
+} listNode;
 
-typedef struct URLList {
-	URLNode *first;
-	URLNode *last;
-} URLList;
+typedef struct treeNode *Tree;
 
-//Create invertedindex.txt with the inverted index of the graph
-void invertedIndex(Graph g);
+struct treeNode {
+	char *word;			//Key
+	listNode *URLList;	//Linked list of URLS in which the key is found in
+	Tree left;			//Pointer to left child
+	Tree right;			//Pointer to right child
+} treeNode;
 
-//Function normalises and returns the input string
-char *normalise(char *string);
+//Function creates a new TreeNode containing the string 'item'
+Tree newTreeNode(char *item);
 
-//Function returns true if the word has been encountered before, otherwise, function returns false
-int word_encountered(URLList *words, char *string);
+//Function searches through the given tree 't' for the string 'item'
+//If present, function returns a pointer to the node containing 'item'
+//If not present, function returns NULL
+Tree TreeSearch(Tree t, char *item);
 
-//Find occurrences of curr_string in all of the urls, and note the relevant urls in inverted.txt
-void find_and_insert(Graph g, char *string);
+//Function inserts a node at the leaf of tree 't', containing the string 'item'
+//Note: function maintains the structure of a BST after insertion
+Tree insertAtLeaf(Tree t, char *item);
 
-//Function returns the number of lines in a given file
-int file_line_num(char *file_name);
+//Function creates a new list node containing 'string'
+listNode *newListNode(char *string);
 
-//Function swaps two lines in the file, given the two lines and their line numbers
-void swap_lines(char *file_name, char *line_a, char *line_b, int pos_a, int pos_b);
+//Function returns if 'string' is present in the list
+int StringInList(listNode *list, char *string);
 
-//Function applied bubble sort to sort the lines of invertedIndex.txt in ascending order
-void sort_index(char *file_name);
+//Function inserts the string into the given linked list at the tail,
+//and returns the head of the new linked list
+//Note: If 'string' is already present in the linked list,
+//the function will not insert a duplicate
+//Note: Function creates a new listNode containing 'string'
+listNode *insertListNode(listNode *list, char *string);
+
+
+//Function appends '.txt' to the end of a string
+char *append_txt(char *string);
+
+//Function prints out the BST in infix order
+//Format: <treeNode->word>  <treeNode->URLList> <treeNode->URLList->next>...
+void print_BST(Tree t, FILE *inverted_fp);
+
+//Function prints out the given linked list into file with file pointer 'inverted_fp'
+void print_URLList(listNode *list, FILE *inverted_fp);
 
 #endif
