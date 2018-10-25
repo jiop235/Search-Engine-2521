@@ -5,33 +5,26 @@
 #include "Graph.h"
 #include "List.h"
 
-//Inpiration from week8 lab 2521 written by John Shepard 2015
+//Inspiration/Basuc Structure (and some code) from week8 lab 2521 written by John Shepard 2015
 
 
 Graph createGraph(int nV){
 
 	//Create GraphRep basic Structure
 	assert(nV > 0);
-	int v, w;
+	int i;
+
 	Graph new = malloc(sizeof(GraphRep));
 	assert(new != NULL);
-	new->nV = nV; new->nE = 0; 
+	new->nV = nV; 
+
+	//Malloc Array of Lists
 	new->edges = malloc(nV * (sizeof(List)));
 	assert(new->edges != NULL);
-	int i = 0;
-	while(i < nV){
+	for(i = 0;i < nV;i++)
 		new->edges[i] = newList();
-		i++;
-	}
 
 	new->index_URL = malloc(nV * sizeof(char*));
-
-	/*for(v = 0; v < nV; v++){
-		new->edges[v] = malloc(nV*sizeof(int));
-		assert(new->edges[v] != NULL);
-		for(w = 0; w < nV; w++)
-			new->edges[v][w] = 0;
-	}*/
 	
 	return new;
 }
@@ -39,45 +32,43 @@ Graph createGraph(int nV){
 void destroyGraph(Graph g){
 	if(g == NULL) return;
 	int i;
-	for(i = 0; i < g->nV; i++){
+
+	//Free Array of lists
+	for(i = 0; i < g->nV; i++)
 		freeList(g->edges[i]);
-		//free(g->edges[i]);
-	}
 	free(g->edges);
+
+	for(i = 0; i < g->nV; i++)
+		free(g->index_URL[i]);
+	free(g->index_URL);
 	free(g);
 }
 
 void insertEdge(Graph g, Vertex v, Vertex w){
 	assert(g != NULL);
-	printf("w %d\n", w);
-	printf("insertEdge %d %s\n", g->edges[v], g->index_URL[w]);
-	insertList(g->edges[v], g->index_URL[w]);
-	//g->edges[v][w] = 1;
-	//g->edges[w][v] = 1;
+	if(v == w) return;
+	insertList(g->edges[w], g->index_URL[v], 0);	//Track the inLinks
+	insertList(g->edges[v], g->index_URL[w], 1);	//Track the outLinks
 }
 
 int isConnected(Graph g, Vertex v, Vertex w){
 	if (v < 0 || w < 0 || v > g->nV || w > g->nV){
 		return 0;
 	}else{
-		//return g->edges[v][w];
 		return isInList(g->edges[v], g->index_URL[w]);
 	}
 }
 
 void showGraph(Graph g){
 	assert(g != NULL);
-	printf("Graph has %d vertices:\n",g->nV);
-		int i;
 
-		for (i = 0; i < g->nV; i++) {
-			printf("%d) URL: %s\n", i, g->index_URL[i]);
-			showList(g->edges[i]);
-		}
-		
+	printf("\n------SHOWING GRAPH------\n\n");
+	printf("Graph has %d vertices:\n",g->nV);
+	int i;
+	for (i = 0; i < g->nV; i++) {
+		printf("%d) URL: %s ", i, g->index_URL[i]);
+		showList(g->edges[i]);
+	}
+	printf("\n\n------END GRAPH------\n");	
 }
-/*
-void removeEdge(Graph g, Vertex v, Vertex w){
-	assert(g != NULL);
-	g->edges[v][w] = 0;
-}*/
+

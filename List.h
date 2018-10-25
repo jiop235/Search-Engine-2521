@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "Graph.h"
 
 // General structure attributed to week3 lab 2521 DLList.h
 // Written by John Shepherd, March 2013
@@ -13,45 +14,32 @@ List newList();
 // free up all space associated with list
 void freeList(List);
 
-// add item to list
-void insertList(List, char*);
+// add item to list (direction either 0 = inLinks, 1 = outLinks)
+void insertList(List, char*, int direction);
 
 // is the item in the list
 int isInList(List, char*);
 
-// check sanity of a List (for testing)
-int validList(List);
+// insert index value (index value of index_URL[])
+void insertIndex(List L, int index);
 
-// return item at current position
-//char *ListCurrent(List);
+//Change the value in pageRank
+void changePageRank(List, float);
 
-// return number of elements in a list
-int ListLength(List);
+//Get the outlinks value from List
+int getOutLinks(List);
 
-// is the list empty?
-int ListIsEmpty(List);
+//Get pageRank from List
+float getPageRank(List);
 
-//Print curr and nitems
-//void showState(List L);
+//Transfer Weight value from outLinks to inLinks
+void inWeight(List L, char *string, float val, int);
 
+
+//Calculate pageRank Weights etc...
+//int pageRankCalc(List L, Graph);		Defined in Graph.h as it require Graph structure
+//.h Hierach Graph.h > List.h > etc.h
+
+//Show the whole list
 void showList(List);
 
-
-/*
-// create an List by reading items from a file
-// assume that the file is open for reading
-List getList(FILE *);
-
-// display list to file, one item per line
-// assumes that the file is open for writing
-void putList(FILE *, List);
-*/
-/*
-// move current position (+ve forward, -ve backward)
-// return 1 if reach end of list during move
-int ListMove(List, int);
-
-// move to specified position in list
-// i'th node, assuming first node has i==1
-int ListMoveTo(List, int);
-*/
