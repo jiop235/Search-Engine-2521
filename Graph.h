@@ -13,7 +13,7 @@
 typedef struct GraphRep *Graph;
 
 typedef struct GraphRep{
-	int nV;			//# vertuces
+	int nV;			    // Number of vertices
 	//int nE;
 	List *edges;
 	char **index_URL;	//Array of urls with there respective index 
@@ -40,12 +40,13 @@ void showGraph(Graph g);
 
 
 
-//List.c functions that rely on Graph for values (values outside of give list) as Graph.h has higher priority then List.h
-
+/* List.c functions that rely on Graph for values 
+ * (values outside of give list) as Graph.h has higher priority then List.h
+ */
 //List.c function calculate Win and Wout values puts it in outLink list (values transferred to inLinks list as required for equation)
 void getWeightedValues(List L, Graph g);
 
-
+//Calculate the summation(PR * Win * Wout)
 float pageRankCalc(List L, Graph);
 
 

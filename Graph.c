@@ -71,8 +71,4 @@ void showGraph(Graph g){
 	}
 	printf("\n\n------END GRAPH------\n");	
 }
-/*
-void removeEdge(Graph g, Vertex v, Vertex w){
-	assert(g != NULL);
-	g->edges[v][w] = 0;
-}*/
+

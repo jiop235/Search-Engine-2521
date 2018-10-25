@@ -1,3 +1,5 @@
+#define _SVID_SOURCE
+#define _DEFAULT_SOURCE
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>

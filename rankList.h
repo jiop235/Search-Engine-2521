@@ -47,17 +47,13 @@ void showRankList(rankList L);
 //Get the number of lists
 int getNumberLists(rankList L);
 
+//Loop through unique and put in an array
 char** getUniqueList(rankList L, char **list);
 
-//Get total amount of urls in all lists
-int getTotalCardinality(rankList L);
-
-//Get cardinality for url given
-int getCardinality(rankList L, char *url);
-
-
+//Brute force recursion
 float bruteForce(rankList L, int level, float low, char** finalList);
 
+//Swap tbetween two nodes values
 void swap(rankList L, int a);
 
 #endif

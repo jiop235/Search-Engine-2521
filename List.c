@@ -2,6 +2,8 @@
 // Written by John Shepherd, March 2013
 // Modified by John Shepherd, August 2014, August 2015
 
+#define _SVID_SOURCE
+#define _DEFAULT_SOURCE
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -112,6 +114,7 @@ void insertList(List L, char *it, int direction){
 	}
 }
 
+//Get / insert values in the list
 void insertIndex(List L, int index){
 	L->index = index;
 }
@@ -127,6 +130,8 @@ float getPageRank(List L){
 	return L->pageRank;
 }
 
+
+//Weight algorithm calculations
 void getWeightedValues(List L, Graph g){
 	int currIndex;
 	float totalOutlinks = 0;
@@ -172,7 +177,6 @@ void inWeight(List L, char *string, float val, int type){
 	ListNode *temp;
 	temp = L->inFirst;
 	while(temp != NULL){
-		printf("tempSring %s string %s\n", temp->string, string);
 		if(strcmp(temp->string, string) == 0){
 			if(type == 0){
 				temp->Wout = val;
@@ -220,41 +224,6 @@ int isInList(List L, char* index){
 	return 0;
 }
 
-// check sanity of a List (for testing)
-int validList(List L)
-{
-	if (L == NULL) {
-		fprintf(stderr,"List is null\n");
-		return 0;
-	}
-	int count;
-	ListNode *curr;
-	// check scanning forward through list
-	count = 0;
-	for (curr = L->outFirst; curr != NULL; curr = curr->next) count++;
-	if (count != L->outLinks) {
-		fprintf(stderr, "Forward count mismatch; counted=%d, outLinks=%d\n",
-		        count, L->outLinks);
-		return 0;
-	}
-	// check scanning backward through list
-	count = 0;
-	// nothing went wrong => must be ok
-	return 1;
-}
-
-
-// return number of elements in a list
-int ListLength(List L)
-{
-	return (L->outLinks);
-}
-
-// is the list empty?
-int ListIsEmpty(List L)
-{
-	return (L->outLinks == 0);
-}
 
 void showList(List L){
 	//show list both in and out links

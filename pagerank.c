@@ -13,8 +13,6 @@
 #define URL_NUM 10
 #define URL_SIZE 30
 
-//This is just pseduocode does not currently run - Nathan 15/10 12:34
-
 
 void totalPageRank (Graph g, float d, float diffPR, int maxIterations);
 void createPageList(Graph g);
@@ -25,6 +23,8 @@ int main(int argc, char *argv[]){
 		printf("Incorrect Input\n");
 		printf("Usage: %s d diffPR maxIterations\n", argv[0]);
 	}
+
+	//Get values 
 	float d = atof(argv[1]);
 	float diffPR = atof(argv[2]);
 	int maxIterations = atoi(argv[3]);
@@ -33,10 +33,14 @@ int main(int argc, char *argv[]){
 	int lines = collectionLength("collection.txt");
 	Graph pageGraph = makeGraph(lines, getCollection("collection.txt", lines));
 
-
+	//Get mage ranks
 	totalPageRank(pageGraph, d, diffPR, maxIterations);
-	showGraph(pageGraph);
+	//showGraph(pageGraph); DEBUGGING
+	
+	//Make file from graph
 	createPageList(pageGraph);
+
+	//Clean up
 	destroyGraph(pageGraph);
 	return 0;
 
@@ -47,8 +51,9 @@ void totalPageRank (Graph g, float d, float diffPR, int maxIterations){
 	int N = g->nV, i;
 	float one = 1;
 	float newPageRank[N];
-	//Set initial PageRank
 	
+
+	//Set initial PageRank
 	for(i = 0; i < N; i++){
 		changePageRank(g->edges[i] , one/N);
 		newPageRank[i] = 0;
@@ -69,6 +74,7 @@ void totalPageRank (Graph g, float d, float diffPR, int maxIterations){
 		for(i = 0; i < g->nV; i++){
 			newPageRank[i] = ((1 - d)/N) + (d * pageRankCalc(g->edges[i], g));
 		}
+		//Calculate diff
 		for(i = 0; i < g->nV; i++){
 			sumCurrDiff += fabsf((newPageRank[i] - getPageRank(g->edges[i])));
 			changePageRank(g->edges[i], newPageRank[i]);
@@ -94,7 +100,7 @@ void createPageList(Graph g){
 	if(fp == NULL) return;
 	
 
-	//Insertion Sort sorting
+	//Sort in order of pagerank and print out to file
 	for(j = 0; j < g->nV; j++){
 		for(i = 0; i < g->nV; i++){
 			if(visited[i] == 1) continue;

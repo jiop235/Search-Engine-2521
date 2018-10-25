@@ -33,24 +33,18 @@ int main(int argc, char *argv[]){
 	}
 	fclose(fp);
 
-	//int totalCardinality = getTotalCardinality(rList);
-	//float lowest;// = 10000000;
 	float totalScaledValue = 0;
 	char **finalList = malloc(rList->nUnique * sizeof(char*));
-
-	//for(EVERY COMBINTION)
 
 
 	for(i = 0; i < rList->nUnique; i++){
 		uniqueNode currUnique = rList->uFirst;
 		while(currUnique != NULL){
-		//Open every list and check scaled footrule
 			rankNode currRank = rList->first; 
 			while(currRank != NULL){
 				int currRankPos = getRankPos(currUnique->urlName, currRank->nLines, currRank->list);
 				if(currRankPos != -1){
-				//printf("currRankPos: %d currRank->nLines: %d currUnique->index: %d rList->nUnique: %d\n",
-				//	currRankPos, currRank->nLines, currUnique->index, rList->nUnique);
+
 					totalScaledValue += fabsf( ((float)currRankPos/ (currRank->nLines) ) - 
 										   ( ((float)currUnique->index) / (rList->nUnique) ) );
 				}
@@ -61,18 +55,6 @@ int main(int argc, char *argv[]){
 	}
 	finalList = getUniqueList(rList, finalList);
 	bruteForce(rList, 0, totalScaledValue, finalList);
-	/*if(totalScaledValue < lowest){
-		lowest = totalScaledValue;
-		getUniqueList(rList, finalList);
-	}*/
-
-	//showRankList(rList);
-
-
-	//printf("\n\nTotal Scaled Value %f\n", lowest);
-	//for(i = 0; i < rList->nUnique; i++) printf("%s\n", finalList[i]);
-	//rankList scaledList = createRankList();
-
 
 
 	freeRankList(rList);
@@ -117,7 +99,7 @@ char* removeExtension(char *url){
 
 	memmove(noExt, url, len);
 	noExt[len+1] = '\0';
-	printf("DEBUG: url %s noExt %s\n", url, noExt);
+	//printf("DEBUG: url %s noExt %s\n", url, noExt);
 
 	return noExt;
 }

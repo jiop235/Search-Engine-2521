@@ -1,8 +1,10 @@
+#define _SVID_SOURCE
+#define _DEFAULT_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "RankList.h"
+#include "rankList.h"
 
 rankList createRankList(){
 	rankList newrankList = malloc(sizeof(struct _rankList));
@@ -174,17 +176,19 @@ char** getUniqueList(rankList L, char **list){
 	return list;
 }
 
+
+//Brute force method changes unique list order and calculates total scaled value from that
+//The intial values are calculated scaledFootrule.c and the rest is recursively calculated
 float bruteForce(rankList L, int level, float low, char **finalList){
 	int i;
 	int nextLevel = level + 1;\
 	float lowestScaled = low;
 	float totalScaledValue = 0;
 	for(i = 0; i < L->nUnique - level; i++){
-		//printf("level %d\n", level);
+
 		lowestScaled = bruteForce(L ,nextLevel ,lowestScaled, finalList);
 		swap(L, level);
 
-		//for(j = 0; j < L->nUnique; j++){
 			uniqueNode currUnique = L->uFirst;
 			while(currUnique != NULL){
 			//Open every list and check scaled footrule
@@ -192,68 +196,39 @@ float bruteForce(rankList L, int level, float low, char **finalList){
 				while(currRank != NULL){
 					int currRankPos = getRankPos(currUnique->urlName, currRank->nLines, currRank->list);
 					if(currRankPos != -1){
-					//printf("currRankPos: %d currRank->nLines: %d currUnique->index: %d L->nUnique: %d\n",
-					//	currRankPos, currRank->nLines, currUnique->index, L->nUnique);
+
 						totalScaledValue += fabsf( ((float)currRankPos/ (currRank->nLines) ) - 
 											   ( ((float)currUnique->index) / (L->nUnique) ) );
-						
 					}
 					currRank = currRank->next;
 				}
 				currUnique = currUnique->next;
 			}	
-		//}
-		//printf("totalScaledValue %f, lowestScaled %f\n", totalScaledValue, lowestScaled);
+
+		//Change final totalscaled value and get the list
 		if(totalScaledValue < lowestScaled){
-			//printf("totalScaledValue %f\n", totalScaledValue);
 			lowestScaled = totalScaledValue;
 			finalList = getUniqueList(L, finalList);
 		}
-		//printf("i %d\n", i);
+
+		//If final interation print values
 		if(i == L->nUnique-1 && level == 0){
-			printf("\n\nTotal Scaled Value %f\n", lowestScaled);
+			printf("Total Scaled Value %f\n", lowestScaled);
 			for(i = 0; i < L->nUnique; i++) printf("%s\n", finalList[i]);
 		}
-		//printf("iiiiii %d\n", i);
-		//printf("lowestScaled %f\n", lowestScaled);
+
 	}
 	return lowestScaled;
 }
 
 void swap(rankList L, int a){
-	int index = a;// - 1;
+	int index = a;
 	uniqueNode curr = L->uFirst;
 	while(curr != NULL){
 		if(index == curr->index) break;
 		curr = curr->next;
 	}
-	//printf("a %d\n", a);
 	char *temp = L->uLast->urlName;
-	//printf("b %d\n", a);
 	L->uLast->urlName = curr->urlName;
-	//printf("c %d\n", a);
 	curr->urlName = temp;
 }
-/*
-int getTotalCardinality(rankList L){
-	if(L == NULL) return 0;
-	return L->nUnique;
-	int totalCardinality = 0;
-	rankNode curr = L->first;
-	while(curr != NULL){
-		totalCardinality += curr->nLines;
-		curr = curr->next;
-	}
-	return totalCardinality;
-}
-
-int getCardinality(rankList L, char *url){
-	if(L == NULL) return 0;
-
-	rankNode curr = L->first;
-	while(curr != NULL){
-		if(strcmp(url, curr->urlName) == 0) return curr->nLines;
-		curr = curr->next;
-	}
-	return 0;
-}*/

@@ -55,6 +55,7 @@ Graph makeGraph(int url_count, char **index_URL){
 
 	pageGraph->index_URL = index_URL;
 
+	//Put urls in the graph from 
 	insert_URLS(pageGraph);
 
 	return pageGraph;
@@ -140,8 +141,3 @@ void recurInsertion(char **arr, int size){
 	arr[i+1] = tail;
 
 }
-//Transalte index to URL
-/*char* index_to_URL(char *index_URL[], int index){
-	if (index_URL[index] != NULL) return index_URL[index];
-	return NULL;
-}*/
